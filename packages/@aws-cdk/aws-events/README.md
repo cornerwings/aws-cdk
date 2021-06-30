@@ -15,7 +15,7 @@ Amazon EventBridge delivers a near real-time stream of system events that
 describe changes in AWS resources. For example, an AWS CodePipeline emits the
 [State
 Change](https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html#codepipeline-event-type)
-event when the pipeline changes it's state.
+event when the pipeline changes its state.
 
 * __Events__: An event indicates a change in your AWS environment. AWS resources
   can generate events when their state changes. For example, Amazon EC2
@@ -76,6 +76,18 @@ For example, this adds an SNS topic as a target:
 onCommitRule.addTarget(new targets.SnsTopic(topic, {
   message: events.RuleTargetInput.fromText(
     `A commit was pushed to the repository ${codecommit.ReferenceEvent.repositoryName} on branch ${codecommit.ReferenceEvent.referenceName}`
+  )
+}));
+```
+
+Or using an Object:
+
+```ts
+onCommitRule.addTarget(new targets.SnsTopic(topic, {
+  message: events.RuleTargetInput.fromObject(
+    {
+      DataType: `custom_${events.EventField.fromPath('$.detail-type')}`
+    }
   )
 }));
 ```
@@ -190,8 +202,8 @@ bus.archive('MyArchive', {
 
 ## Granting PutEvents to an existing EventBus
 
-To import an existing EventBus into your CDK application, use `EventBus.fromEventBusArn` or `EventBus.fromEventBusAttributes`
-factory method.
+To import an existing EventBus into your CDK application, use `EventBus.fromEventBusArn`, `EventBus.fromEventBusAttributes`
+or `EventBus.fromEventBusName` factory method.
 
 Then, you can use the `grantPutEventsTo` method to grant `event:PutEvents` to the eventBus.
 
